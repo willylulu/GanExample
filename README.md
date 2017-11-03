@@ -17,3 +17,7 @@
 *	numpy
 *	cv2
 *	matplotlib
+
+##  preprocessing
+* You need to put all image in numpy matrix
+* numpy matrix needs to be (-1,64,64,3)
