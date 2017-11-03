@@ -4,6 +4,8 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+# argv 1:target directory
+# argv 2:target numpy matrix file
 data = np.load(sys.argv[1]+sys.argv[2]+'.npy')
 print(data.shape)
 for i in range(len(data)):
