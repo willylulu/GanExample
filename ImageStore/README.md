@@ -1,4 +1,4 @@
-# Img2Img Image Storat8ion
+# Img2Img Image Storation
 
 ##	Make blur image recovery to origin image
 ![github](https://i.imgur.com/0LMT0nY.jpg "image")
