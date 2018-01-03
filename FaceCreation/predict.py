@@ -7,13 +7,13 @@ from keras.backend.tensorflow_backend import set_session
 
 class face_maker():
     
-    def __init__(self):
+    def __init__(self, path):
         
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
         set_session(tf.Session(config=config))
         
-        self.generator = load_model('models/generator22.h5')
+        self.generator = load_model(path)
         
     def make_faces(self, batch):
         noise = np.random.uniform(-1.0, 1.0, size=[batch, 100])
