@@ -43,4 +43,9 @@ Following the paper, we use the optimizer as same as the paper.
 *	tensorflow
 
 ##	Todo
-* Add conditional input for implement conditional GAN Loss
+*	Add conditional input for implement conditional GAN Loss
+
+##	Reference
+*	https://github.com/tjwei/GANotebooks
+*	https://github.com/carpedm20/DCGAN-tensorflow
+*	https://github.com/GunhoChoi/LSGAN-TF
