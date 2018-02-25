@@ -1,7 +1,7 @@
 # Img2Img Image Storation
 
 ##	Using Generative Adversarial Network generates faces 
-![github](https://github.com/willylulu/GanExample/blob/master/FaceCreation/test.png "image")
+![github](https://github.com/willylulu/GanExample/blob/master/FaceCreation_DCGAN/test.png "image")
 
 ##	Dataset
 *	The GAN model trained by celebA dataset
