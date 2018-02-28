@@ -15,7 +15,7 @@ class cycleGan():
     def __init__(self):
         self.batch = 1
         self.epochs = 300
-        self.imageshape = (128, 128, 3)
+        self.imageshape = (256, 256, 3)
         
         self.lr=2e-4
         
@@ -54,18 +54,18 @@ class cycleGan():
         self.d_loss4 = K.mean(K.square(K.zeros_like(self.d_fake_y) - K.sigmoid(self.d_fake_y)), axis=-1)
         self.d_loss = (self.d_loss1 + self.d_loss2 + self.d_loss3 + self.d_loss4)/2
     
-    def set_lr(self, lr, decay):
+    def set_lr(self, lr):
         
-        self.d_training_updates = Adam(lr=lr, beta_1=0.5, decay=decay).get_updates(self.x2y.discriminator.trainable_weights + self.y2x.discriminator.trainable_weights,[], self.d_loss)
+        self.d_training_updates = Adam(lr=lr, beta_1=0.5).get_updates(self.x2y.discriminator.trainable_weights + self.y2x.discriminator.trainable_weights,[], self.d_loss)
         self.d_train = K.function([self.real_x, self.real_y], [self.d_loss], self.d_training_updates)
         
-        self.g_training_updates = Adam(lr=lr, beta_1=0.5, decay=decay).get_updates(self.x2y.generator.trainable_weights + self.y2x.generator.trainable_weights,[], self.g_loss)
+        self.g_training_updates = Adam(lr=lr, beta_1=0.5).get_updates(self.x2y.generator.trainable_weights + self.y2x.generator.trainable_weights,[], self.g_loss)
         self.g_train = K.function([self.real_x, self.real_y], [self.g_loss], self.g_training_updates)
         
     def train(self, datasetx, datasety):
         
         print("training...")
-        self.set_lr(self.lr, 2e-8)
+        self.set_lr(self.lr)
         for k in range(0, self.epochs):
             
             seed = np.random.permutation(len(datasetx))
@@ -97,14 +97,14 @@ class cycleGan():
                     images = np.concatenate([imagea[:4], fakexx[:4], fakey[:4], imageb[:4], fakeyy[:4], fakex[:4], imagea[4:], fakexx[4:], fakey[4:], imageb[4:], fakeyy[4:], fakex[4:]])
                     width = 4
                     height = 6
-                    new_im = Image.new('RGB', (128*height,128*width))
+                    new_im = Image.new('RGB', (256*height,256*width))
                     for ii in range(height):
                         for jj in range(width):
                             index=ii*width+jj
                             image = (images[index]/2+0.5)*255
                             image = image.astype(np.uint8)
-                            new_im.paste(Image.fromarray(image,"RGB"), (128*ii,128*jj))
-                    filename = "images/fakeFace%d.png"%k
+                            new_im.paste(Image.fromarray(image,"RGB"), (256*ii,256*jj))
+                    filename = "images/fakeFace%d.png"%(k/10)
                     new_im.save(filename)
-                    self.x2y.generator.save("models/generator_x2y%d.h5"%k)
-                    self.y2x.generator.save("models/generator_y2x%d.h5"%k)
+                    self.x2y.generator.save("models/generator_x2y%d.h5"%(k/10))
+                    self.y2x.generator.save("models/generator_y2x%d.h5"%(k/10))

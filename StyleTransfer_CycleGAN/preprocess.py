@@ -15,12 +15,12 @@ x = [None]*fileAnum
 y = [None]*fileBnum
 
 for i in range(fileAnum):
-    x[i] = transform.resize(io.imread(os.path.join(pathA, filesA[i])),(128, 128))*2-1
+    x[i] = io.imread(os.path.join(pathA, filesA[i]))/127.5-1
 x = np.array(x)
 print(np.min(x))
 print(x.shape)
 for i in range(fileBnum):
-    y[i] = transform.resize(io.imread(os.path.join(pathB, filesB[i])),(128, 128))*2-1
+    y[i] = io.imread(os.path.join(pathB, filesB[i]))/127.5-1
 y = np.array(y)
 print(np.min(y))
 print(y.shape)
