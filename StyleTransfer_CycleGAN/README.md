@@ -1,5 +1,5 @@
 # Style Transfer ( Cycle GAN
-！[teaser](https://github.com/willylulu/GanExample/blob/master/StyleTransfer_CycleGAN/images/teaser.jpg?raw=true)
+![teaser](https://github.com/willylulu/GanExample/blob/master/StyleTransfer_CycleGAN/images/teaser.jpg?raw=true)
 *	Transfer monet plant to photo and transfer photo to monet style
 *	Using Cycle GAN (resnet or unet architecture
 *	[Training dataset is from taesung_park/berkery](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
@@ -25,4 +25,4 @@
 ![test](https://github.com/willylulu/GanExample/blob/master/StyleTransfer_CycleGAN/test.jpg?raw=true)
 
 ## Reference
-*	[XHUJOY/CycleGAN-tensorflow](https://github.com/XHUJOY/CycleGAN-tensorflow)
+*	![XHUJOY/CycleGAN-tensorflow](https://github.com/XHUJOY/CycleGAN-tensorflow)
