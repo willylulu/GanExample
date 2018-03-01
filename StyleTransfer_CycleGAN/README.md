@@ -1,5 +1,7 @@
 # Style Transfer ( Cycle GAN
 ![teaser](https://github.com/willylulu/GanExample/blob/master/StyleTransfer_CycleGAN/images/teaser.jpg?raw=true)
+
+ref:[Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networkssee](https://arxiv.org/pdf/1703.10593.pdf)
 *	Transfer monet plant to photo and transfer photo to monet style
 *	Using Cycle GAN (resnet or unet architecture
 *	[Training dataset is from taesung_park/berkery](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
