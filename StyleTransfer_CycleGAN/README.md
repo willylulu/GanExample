@@ -1,6 +1,6 @@
 # Style Transfer ( Cycle GAN
 *	Transfer monet plant to photo and transfer photo to monet style
-*	Using Cycle GAN (unet architecture
+*	Using Cycle GAN (resnet or unet architecture
 *	[Training dataset is from taesung_park/berkery](https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/)
 
 ##	Usage
