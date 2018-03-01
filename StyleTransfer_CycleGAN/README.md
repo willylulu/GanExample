@@ -16,5 +16,12 @@
 
 `python3 predict.py <domain A dataset path> <domain B dataset path>`
 
+## Result
+* First column is original monet paintings
+* Second column is monet2photo image
+* Third column is original photos
+* Last column is photo2monet image
+![test](https://github.com/willylulu/GanExample/blob/master/StyleTransfer_CycleGAN/test.jpg?raw=true)
+
 ## Reference
 *	[XHUJOY/CycleGAN-tensorflow](https://github.com/XHUJOY/CycleGAN-tensorflow)
