@@ -19,4 +19,4 @@ class InstanceNormalization2D(Layer):
         return self.scale * normalized + self.shift
 
     def compute_output_shape(self, input_shape):
-        return input_shape 
+        return input_shape

@@ -42,16 +42,16 @@ class cycleGan():
         self.d_real_x = self.y2x.discriminator([self.real_x])
         self.d_real_y = self.x2y.discriminator([self.real_y])
         
-        self.g_loss1 = K.mean(K.square(K.ones_like(self.d_fake_x) - K.sigmoid(self.d_fake_x)), axis=-1)
-        self.g_loss2 = K.mean(K.square(K.ones_like(self.d_fake_y) - K.sigmoid(self.d_fake_y)), axis=-1)
+        self.g_loss1 = K.mean(K.square(K.ones_like(self.d_fake_x) - self.d_fake_x), axis=-1)
+        self.g_loss2 = K.mean(K.square(K.ones_like(self.d_fake_y) - self.d_fake_y), axis=-1)
         self.g_loss3 = K.mean(K.abs(self.real_x - self.fake_xx))
         self.g_loss4 = K.mean(K.abs(self.real_y - self.fake_yy))
         self.g_loss = self.g_loss1 + self.g_loss2 + 10 * self.g_loss3 + 10 * self.g_loss4
         
-        self.d_loss1 = K.mean(K.square(K.ones_like(self.d_real_x) - K.sigmoid(self.d_real_x)), axis=-1)
-        self.d_loss2 = K.mean(K.square(K.zeros_like(self.d_fake_x) - K.sigmoid(self.d_fake_x)), axis=-1)
-        self.d_loss3 = K.mean(K.square(K.ones_like(self.d_real_y) - K.sigmoid(self.d_real_y)), axis=-1)
-        self.d_loss4 = K.mean(K.square(K.zeros_like(self.d_fake_y) - K.sigmoid(self.d_fake_y)), axis=-1)
+        self.d_loss1 = K.mean(K.square(K.ones_like(self.d_real_x) - self.d_real_x), axis=-1)
+        self.d_loss2 = K.mean(K.square(K.zeros_like(self.d_fake_x) - self.d_fake_x), axis=-1)
+        self.d_loss3 = K.mean(K.square(K.ones_like(self.d_real_y) - self.d_real_y), axis=-1)
+        self.d_loss4 = K.mean(K.square(K.zeros_like(self.d_fake_y) - self.d_fake_y), axis=-1)
         self.d_loss = (self.d_loss1 + self.d_loss2 + self.d_loss3 + self.d_loss4)/2
     
     def set_lr(self, lr):

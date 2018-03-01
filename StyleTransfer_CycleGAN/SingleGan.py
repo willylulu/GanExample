@@ -1,8 +1,8 @@
 import tensorflow as tf
 import keras
 from keras.models import Model, Sequential
-from keras.layers import Dense, Flatten, LeakyReLU, Activation, Reshape, Input, Dropout
-from keras.layers import Conv2D, Conv2DTranspose, Lambda, Concatenate
+from keras.layers import Dense, Flatten, LeakyReLU, Activation, Reshape, Input, Dropout, ZeroPadding2D
+from keras.layers import Conv2D, Conv2DTranspose, Lambda, Concatenate, Add
 from keras.layers import BatchNormalization
 from util import InstanceNormalization2D
 
@@ -33,56 +33,76 @@ class singleGan():
         self.ct = Concatenate(axis=-1)
         self.tanh = Activation('tanh')
 
-    def get_generator_weight(self):   
-#             generator weight
-        self.gc1 = Conv2D(self.g_dim, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb1 = InstanceNormalization2D()
-#             128 128 64
-        self.gc2 = Conv2D(self.g_dim*2, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb2 = InstanceNormalization2D()
-#             64 64 128   
-        self.gc3 = Conv2D(self.g_dim*4, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb3 = InstanceNormalization2D()
-#             32 32 256
-        self.gc4 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb4 = InstanceNormalization2D()
-#             16 16 512
-        self.gc5 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb5 = InstanceNormalization2D()
-#             8 8 512
-        self.gc6 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb6 = InstanceNormalization2D()
-#             4 4 512
-        self.gc7 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb7 = InstanceNormalization2D()
-#             2 2 512
-        self.gc8 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb8 = InstanceNormalization2D()
-#             1 1 512
+    def get_generator_weight(self, unet=False):   
+        if unet == True:
+    #             generator weight
+            self.gc1 = Conv2D(self.g_dim, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb1 = InstanceNormalization2D()
+    #             128 128 64
+            self.gc2 = Conv2D(self.g_dim*2, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb2 = InstanceNormalization2D()
+    #             64 64 128   
+            self.gc3 = Conv2D(self.g_dim*4, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb3 = InstanceNormalization2D()
+    #             32 32 256
+            self.gc4 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb4 = InstanceNormalization2D()
+    #             16 16 512
+            self.gc5 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb5 = InstanceNormalization2D()
+    #             8 8 512
+            self.gc6 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb6 = InstanceNormalization2D()
+    #             4 4 512
+            self.gc7 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb7 = InstanceNormalization2D()
+    #             2 2 512
+            self.gc8 = Conv2D(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb8 = InstanceNormalization2D()
+    #             1 1 512
 
-        self.gc77 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb77 = InstanceNormalization2D()
-#             2 2 512
-        self.gc66 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb66 = InstanceNormalization2D()
-#             4 4 512
-        self.gc55 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb55 = InstanceNormalization2D()
-#             8 8 512
-        self.gc44 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb44 = InstanceNormalization2D()
-#             16 16 512
-        self.gc33 = Conv2DTranspose(self.g_dim*4, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb33 = InstanceNormalization2D()
-#             32 32 256
-        self.gc22 = Conv2DTranspose(self.g_dim*2, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb22 = InstanceNormalization2D()
-#             64 64 128   
-        self.gc11 = Conv2DTranspose(self.g_dim, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-        self.gb11 = InstanceNormalization2D()
-#             128 128 64
-        self.gc00 = Conv2DTranspose(3, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
-#             256 256 3
+            self.gc77 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb77 = InstanceNormalization2D()
+    #             2 2 512
+            self.gc66 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb66 = InstanceNormalization2D()
+    #             4 4 512
+            self.gc55 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb55 = InstanceNormalization2D()
+    #             8 8 512
+            self.gc44 = Conv2DTranspose(self.g_dim*8, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb44 = InstanceNormalization2D()
+    #             16 16 512
+            self.gc33 = Conv2DTranspose(self.g_dim*4, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb33 = InstanceNormalization2D()
+    #             32 32 256
+            self.gc22 = Conv2DTranspose(self.g_dim*2, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb22 = InstanceNormalization2D()
+    #             64 64 128   
+            self.gc11 = Conv2DTranspose(self.g_dim, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb11 = InstanceNormalization2D()
+    #             128 128 64
+            self.gc00 = Conv2DTranspose(3, 4, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+    #             256 256 3
+        else:
+    #             generator weight
+            self.gc1 = Conv2D(self.g_dim, 7, strides=1, padding='valid', kernel_initializer=self.truncate_normal)
+            self.gb1 = InstanceNormalization2D()
+    #             256 256 64
+            self.gc2 = Conv2D(self.g_dim*2, 3, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb2 = InstanceNormalization2D()
+    #             128 128 128   
+            self.gc3 = Conv2D(self.g_dim*4, 3, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb3 = InstanceNormalization2D()
+    #             64 64 256
+    
+            self.gc22 = Conv2DTranspose(self.g_dim*2, 3, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb22 = InstanceNormalization2D()
+    #             128 128 128   
+            self.gc11 = Conv2DTranspose(self.g_dim, 3, strides=2, padding='same', kernel_initializer=self.truncate_normal)
+            self.gb11 = InstanceNormalization2D()
+    #             256 256 64
+            self.gc0 = Conv2D(3, 7, strides=1, padding='same', kernel_initializer=self.truncate_normal)
 
     def get_discriminator_weight(self):
 #             discriminator weight
@@ -97,30 +117,65 @@ class singleGan():
         self.dc4 = Conv2D(1, 1, strides=1, padding='same', kernel_initializer=self.truncate_normal)
         self.dd1 = Dense(1, kernel_initializer=self.truncate_normal)
 
-    def get_generator_model(self):   
+    def get_generator_model(self, unet=False):   
 #             generator model
-        self.ginput = Input(shape=self.imageshape)
-        self.ng1 = self.gb1(self.gc1(self.ginput))
-        self.ng2 = self.gb2(self.gc2(self.lk(self.ng1)))
-        self.ng3 = self.gb3(self.gc3(self.lk(self.ng2)))
-        self.ng4 = self.gb4(self.gc4(self.lk(self.ng3)))
-        self.ng5 = self.gb5(self.gc5(self.lk(self.ng4)))
-        self.ng6 = self.gb6(self.gc6(self.lk(self.ng5)))
-        self.ng7 = self.gb7(self.gc7(self.lk(self.ng6)))
-        
-        self.ng8 = self.gb8(self.gc8(self.lk(self.ng7)))
+        if unet == True:
+            self.ginput = Input(shape=self.imageshape)
+            self.ng1 = self.gb1(self.gc1(self.ginput))
+            self.ng2 = self.gb2(self.gc2(self.lk(self.ng1)))
+            self.ng3 = self.gb3(self.gc3(self.lk(self.ng2)))
+            self.ng4 = self.gb4(self.gc4(self.lk(self.ng3)))
+            self.ng5 = self.gb5(self.gc5(self.lk(self.ng4)))
+            self.ng6 = self.gb6(self.gc6(self.lk(self.ng5)))
+            self.ng7 = self.gb7(self.gc7(self.lk(self.ng6)))
 
-        self.ng77 = self.ct([self.gb77(self.dp(self.gc77(self.rl(self.ng8)))), self.ng7])
-        self.ng66 = self.ct([self.gb66(self.dp(self.gc66(self.rl(self.ng77)))), self.ng6])
-        self.ng55 = self.ct([self.gb55(self.dp(self.gc55(self.rl(self.ng66)))), self.ng5])
-        self.ng44 = self.ct([self.gb44(self.dp(self.gc44(self.rl(self.ng55)))), self.ng4])
-        self.ng33 = self.ct([self.gb33(self.dp(self.gc33(self.rl(self.ng44)))), self.ng3])
-        self.ng22 = self.ct([self.gb22(self.dp(self.gc22(self.rl(self.ng33)))), self.ng2])
-        self.ng11 = self.ct([self.gb11(self.dp(self.gc11(self.rl(self.ng22)))), self.ng1])
+            self.ng8 = self.gb8(self.gc8(self.lk(self.ng7)))
 
-        self.ng17 = self.tanh(self.gc00(self.rl(self.ng11)))
+            self.ng77 = self.ct([self.gb77(self.dp(self.gc77(self.rl(self.ng8)))), self.ng7])
+            self.ng66 = self.ct([self.gb66(self.dp(self.gc66(self.rl(self.ng77)))), self.ng6])
+            self.ng55 = self.ct([self.gb55(self.dp(self.gc55(self.rl(self.ng66)))), self.ng5])
+            self.ng44 = self.ct([self.gb44(self.dp(self.gc44(self.rl(self.ng55)))), self.ng4])
+            self.ng33 = self.ct([self.gb33(self.dp(self.gc33(self.rl(self.ng44)))), self.ng3])
+            self.ng22 = self.ct([self.gb22(self.dp(self.gc22(self.rl(self.ng33)))), self.ng2])
+            self.ng11 = self.ct([self.gb11(self.dp(self.gc11(self.rl(self.ng22)))), self.ng1])
 
-        self.generator = Model(inputs=[self.ginput], outputs=[self.ng17])
+            self.ng17 = self.tanh(self.gc00(self.rl(self.ng11)))
+
+            self.generator = Model(inputs=[self.ginput], outputs=[self.ng17])
+        else:
+            
+            def residual_block(x, dim, ks):
+                y = ZeroPadding2D(padding=(1, 1))(x)
+                y = Conv2D(dim, ks, strides=1, padding='valid', kernel_initializer=self.truncate_normal)(y)
+                y = InstanceNormalization2D()(y)
+                y = LeakyReLU(alpha=0.2)(y)
+                y = ZeroPadding2D(padding=(1, 1))(y)
+                y = Conv2D(dim, ks, strides=1, padding='valid', kernel_initializer=self.truncate_normal)(y)
+                y = InstanceNormalization2D()(y)
+                return Add()([x,y])
+            
+            self.ginput = Input(shape=self.imageshape)
+            self.ngg = ZeroPadding2D(padding=(3, 3))(self.ginput)
+            self.ng1 = self.lk(self.gb1(self.gc1(self.ngg)))
+            self.ng2 = self.lk(self.gb2(self.gc2(self.ng1)))
+            self.ng3 = self.lk(self.gb3(self.gc3(self.ng2)))
+            
+            self.r1 = residual_block(self.ng3, self.g_dim*4, 3)
+            self.r2 = residual_block(self.r1, self.g_dim*4, 3)
+            self.r3 = residual_block(self.r2, self.g_dim*4, 3)
+            self.r4 = residual_block(self.r3, self.g_dim*4, 3)
+            self.r5 = residual_block(self.r4, self.g_dim*4, 3)
+            self.r6 = residual_block(self.r5, self.g_dim*4, 3)
+            self.r7 = residual_block(self.r6, self.g_dim*4, 3)
+            self.r8 = residual_block(self.r7, self.g_dim*4, 3)
+            self.r9 = residual_block(self.r8, self.g_dim*4, 3)
+            
+            self.ng22 = self.lk(self.gb22(self.gc22(self.r9)))
+            self.ng11 = self.lk(self.gb11(self.gc11(self.ng22)))
+            self.ng0 = self.tanh(self.gc0(self.ng11))
+            
+            self.generator = Model(inputs=[self.ginput], outputs=[self.ng0])
+            
 
     def get_discriminator_model(self):  
 #             discriminator model

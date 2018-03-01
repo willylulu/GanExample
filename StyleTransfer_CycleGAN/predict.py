@@ -8,8 +8,8 @@ from keras.models import load_model
 from keras.backend.tensorflow_backend import set_session
 from util import InstanceNormalization2D
 
-x2y = load_model('models/generator_x2y2.h5', custom_objects={'InstanceNormalization2D':InstanceNormalization2D})
-y2x = load_model('models/generator_y2x2.h5', custom_objects={'InstanceNormalization2D':InstanceNormalization2D})
+x2y = load_model('models/generator_x2y21.h5', custom_objects={'InstanceNormalization2D':InstanceNormalization2D})
+y2x = load_model('models/generator_y2x21.h5', custom_objects={'InstanceNormalization2D':InstanceNormalization2D})
 
 pathX = sys.argv[1]
 pathY = sys.argv[2]
@@ -26,7 +26,7 @@ arrX = np.array(picX)/127.5-1
 arrY = np.array(picY)/127.5-1
 
 arrX2Y = x2y.predict(arrX)
-arrY2X = x2y.predict(arrY)
+arrY2X = y2x.predict(arrY)
 
 images = np.concatenate([arrX[:8], arrX2Y[:8], arrY[:8], arrY2X[:8], arrX[8:], arrX2Y[8:], arrY[8:], arrY2X[8:]])
 width = 8
