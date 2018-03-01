@@ -25,4 +25,4 @@
 ![test](https://github.com/willylulu/GanExample/blob/master/StyleTransfer_CycleGAN/test.jpg?raw=true)
 
 ## Reference
-*	![XHUJOY/CycleGAN-tensorflow](https://github.com/XHUJOY/CycleGAN-tensorflow)
+*	[XHUJOY/CycleGAN-tensorflow](https://github.com/XHUJOY/CycleGAN-tensorflow)
