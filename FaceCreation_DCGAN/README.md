@@ -1,4 +1,4 @@
-# Img2Img Image Storation
+# Face Creation ( DCGAN
 
 ##	Using Generative Adversarial Network generates faces 
 ![github](https://github.com/willylulu/GanExample/blob/master/FaceCreation_DCGAN/test.png "image")
