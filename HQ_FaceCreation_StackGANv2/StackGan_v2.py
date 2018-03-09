@@ -134,3 +134,5 @@ class StackGan():
                 saveImages('./fake64', fake_64, 64, ep/100)
                 saveImages('./fake128', fake_128, 128, ep/100)
                 saveImages('./fake256', fake_256, 256, ep/100)
+            if ep%100==0 and ep>0:
+                self.gnet_model.save('stackGan_v2.h5')
