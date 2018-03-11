@@ -9,6 +9,10 @@
 
 `python3 train.py <path to celeba-hq>`
 
+*	Predict
+
+`python3 predict.py <path to gnet model weights>`
+
 ##	Result
 <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face1.png?raw=true" width="256" height="256">
 <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face2.png?raw=true" width="256" height="256">
