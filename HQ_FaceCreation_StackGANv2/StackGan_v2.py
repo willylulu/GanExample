@@ -13,14 +13,21 @@ from keras import backend as K
 
 class StackGan():
     
-    def __init__(self, path):
+    def __init__(self, path, training=True):
         self.batch = 64
         self.imgNums = 30000
         self.epochs = 30000
         self.noiseNum = 100
         self.imageshape = [(64, 64, 3), (128, 128, 3), (256, 256, 3)]
         self.lr = 0.0002
-        self.dataset = celebHq(path, 64, 30000)
+        if training:
+            self.dataset = celebHq(path, 64, 30000)
+            self.get_model()
+            self.get_loss()
+            self.get_optimizer()
+        else:
+            self.get_model()
+            self.gnet_model.load_weights(path)
     
     def get_model(self):
         self.d_64_input = Input(shape=self.imageshape[0])
@@ -118,10 +125,6 @@ class StackGan():
         
     def train(self):
         
-        self.get_model()
-        self.get_loss()
-        self.get_optimizer()
-        
         print("training...")
         
         for ep in range(self.epochs):
@@ -150,4 +153,8 @@ class StackGan():
                 self.gnet_model.save_weights('gnet_model.h5')
                 self.dnet_64_model.save('dnet_64_model.h5')
                 self.dnet_128_model.save('dnet_128_model.h5')                
-                self.dnet_256_model.save('dnet_256_model.h5')                
+                self.dnet_256_model.save('dnet_256_model.h5') 
+    def predict(self, noise):
+        
+        fake_64, fake_128, fake_256 = self.gnet_model.predict(noise)
+        return fake_64, fake_128, fake_256

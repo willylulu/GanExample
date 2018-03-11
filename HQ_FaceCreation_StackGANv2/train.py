@@ -11,5 +11,5 @@ K.set_learning_phase(True)
 # config.gpu_options.allow_growth = True
 # set_session(tf.Session(config=config))
 
-stackgan = StackGan(sys.argv[1])
+stackgan = StackGan(sys.argv[1], training=True)
 stackgan.train()
