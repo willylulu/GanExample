@@ -100,15 +100,21 @@ class StackGan():
         d_loss_256_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_256_real), K.sigmoid(dnet_256_real)), axis=-1)
         d_loss_256_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_256_fake), K.sigmoid(dnet_256_fake)), axis=-1)
         
-        self.d_loss = d_loss_64_real + d_loss_64_fake + d_loss_128_real + d_loss_128_fake + d_loss_256_real + d_loss_256_fake 
+        self.d_loss64 = d_loss_64_real + d_loss_64_fake
+        self.d_loss128 = d_loss_128_real + d_loss_128_fake
+        self.d_loss256 = d_loss_256_real + d_loss_256_fake 
     
     def get_optimizer(self):
         
-        self.g_training_updates = Adam(lr=self.lr, beta_1=0.5, beta_2=0.9).get_updates(self.gnet_model.trainable_weights,[], self.g_loss)
+        self.g_training_updates = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.gnet_model.trainable_weights,[], self.g_loss)
         self.g_train = K.function([self.gnet_noise], [self.g_loss], self.g_training_updates)
         
-        self.d_training_updates = Adam(lr=self.lr, beta_1=0.5, beta_2=0.9).get_updates(self.dnet_64_model.trainable_weights + self.dnet_128_model.trainable_weights + self.dnet_256_model.trainable_weights,[], self.d_loss)
-        self.d_train = K.function([self.gnet_noise, self.real_64, self.real_128, self.real_256], [self.d_loss], self.d_training_updates)
+        self.d_training_updates64 = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_64_model.trainable_weights,[], self.d_loss64)
+        self.d_training_updates128 = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_128_model.trainable_weights,[], self.d_loss128)
+        self.d_training_updates256 = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_256_model.trainable_weights,[], self.d_loss256)
+        self.d_train64 = K.function([self.gnet_noise, self.real_64], [self.d_loss64], self.d_training_updates64)
+        self.d_train128 = K.function([self.gnet_noise, self.real_128], [self.d_loss128], self.d_training_updates128)
+        self.d_train256 = K.function([self.gnet_noise, self.real_256], [self.d_loss256], self.d_training_updates256)
         
     def train(self):
         
@@ -122,11 +128,16 @@ class StackGan():
             real_64, real_128, real_256 = self.dataset.getImages()
             noise = np.random.normal(0, 1.0, size=[self.batch, 100])
             for i in range(1):
-                errD = self.d_train([noise, real_64, real_128, real_256])
-            for i in range(2):
+                errD64 = self.d_train64([noise, real_64])
+                errD128 = self.d_train128([noise, real_128])
+                errD256 = self.d_train256([noise, real_256])
+                errD = np.mean(errD64) + np.mean(errD128) + np.mean(errD256)
+                
+            for i in range(1):
                 errG = self.g_train([noise])
+                errG = np.mean(errG)
             
-            print(np.mean(errD), np.mean(errG))
+            print(errD, errG)
             
             if ep%10==0 and ep>0:
                 noise = np.random.normal(0, 1.0, size=[16, 100])
@@ -134,5 +145,9 @@ class StackGan():
                 saveImages('./fake64', fake_64, 64, ep/100)
                 saveImages('./fake128', fake_128, 128, ep/100)
                 saveImages('./fake256', fake_256, 256, ep/100)
+                print("save")
             if ep%100==0 and ep>0:
-                self.gnet_model.save('stackGan_v2.h5')
+                self.gnet_model.save_weights('gnet_model.h5')
+                self.dnet_64_model.save('dnet_64_model.h5')
+                self.dnet_128_model.save('dnet_128_model.h5')                
+                self.dnet_256_model.save('dnet_256_model.h5')                
