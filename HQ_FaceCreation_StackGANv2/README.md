@@ -10,6 +10,11 @@
 `python3 train.py <path to celeba-hq>`
 
 ##	Result
+<img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face1.png?raw=true" width="256" height="256">
+<img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face2.png?raw=true" width="256" height="256">
+
+<img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face3.png?raw=true" width="256" height="256">
+<img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face4.png?raw=true" width="256" height="256">
 ##	Reference
 *	[hanzhanggit/StackGAN-v2](https://github.com/hanzhanggit/StackGAN-v2)
 *	[StackGAN++: Realistic Image Synthesis with Stacked Generative Adversarial Networks](https://arxiv.org/abs/1710.10916)
