@@ -158,7 +158,7 @@ class StackGan():
                 errD256 = self.d_train256([noise, real_256])
                 errD = np.mean(errD64) + np.mean(errD128) + np.mean(errD256)
                 
-            for i in range(2):
+            for i in range(1):
                 errG = self.g_train([noise])
                 errG = np.mean(errG)
             
