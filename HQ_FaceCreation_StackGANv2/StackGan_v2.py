@@ -10,22 +10,33 @@ from keras.models import Model, Sequential
 from keras.optimizers import Adam, RMSprop
 from keras.engine.topology import Layer
 from keras import backend as K
+from keras.backend.tensorflow_backend import set_session
+
 
 class StackGan():
     
     def __init__(self, path, training=True):
-        self.batch = 64
+        self.batch = 24
         self.imgNums = 30000
         self.epochs = 30000
         self.noiseNum = 100
         self.imageshape = [(64, 64, 3), (128, 128, 3), (256, 256, 3)]
         self.lr = 0.0002
+        
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        set_session(tf.Session(config=config))
+        
         if training:
-            self.dataset = celebHq(path, 64, 30000)
+            K.set_learning_phase(True)
+            
+            self.dataset = celebHq(path, self.batch, 30000)
             self.get_model()
             self.get_loss()
             self.get_optimizer()
         else:
+            K.set_learning_phase(False)
+            
             self.get_model()
             self.gnet_model.load_weights(path)
     
@@ -127,7 +138,18 @@ class StackGan():
         
         print("training...")
         
+        if os.path.exists('gnet_model.h5'):
+            self.gnet_model.load_weights('gnet_model.h5')
+        if os.path.exists('dnet_64_model.h5'):
+            self.dnet_64_model.load_weights('dnet_64_model.h5')
+        if os.path.exists('dnet_128_model.h5'):
+            self.dnet_128_model.load_weights('dnet_128_model.h5')
+        if os.path.exists('dnet_256_model.h5'):
+            self.dnet_256_model.load_weights('dnet_256_model.h5')
+        
         for ep in range(self.epochs):
+            K.set_learning_phase(True)
+            
             real_64, real_128, real_256 = self.dataset.getImages()
             noise = np.random.normal(0, 1.0, size=[self.batch, 100])
             for i in range(1):
@@ -136,13 +158,15 @@ class StackGan():
                 errD256 = self.d_train256([noise, real_256])
                 errD = np.mean(errD64) + np.mean(errD128) + np.mean(errD256)
                 
-            for i in range(1):
+            for i in range(2):
                 errG = self.g_train([noise])
                 errG = np.mean(errG)
             
             print(errD, errG)
             
             if ep%10==0 and ep>0:
+                K.set_learning_phase(False)
+                
                 noise = np.random.normal(0, 1.0, size=[16, 100])
                 fake_64, fake_128, fake_256 = self.gnet_model.predict(noise)
                 saveImages('./fake64', fake_64, 64, ep/100)
