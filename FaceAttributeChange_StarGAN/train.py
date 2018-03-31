@@ -10,6 +10,7 @@ from keras.backend.tensorflow_backend import set_session
 
 from starGan import StarGan
 
+# K.set_floatx('float64')
 K.set_learning_phase(False)
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True

@@ -24,7 +24,7 @@ class StarGan():
         self.sample = 4
         self.epochs = 1e8
         self.imgSize = 128
-        self.attSize = 9
+        self.attSize = 12
         self.img_shape = (self.imgSize, self.imgSize, 3)
         self.att_shape = (self.attSize,)
         K.set_learning_phase(True)
@@ -148,7 +148,7 @@ class StarGan():
 
             for i in range(1):
                 errD = self.d_train([img_as, img_bs, att_as, att_bs])
-            for i in range(1):
+            for i in range(2):
                 errG = self.g_train([img_as, att_as, att_bs])
             print(np.mean(errD), np.mean(errG))    
 
