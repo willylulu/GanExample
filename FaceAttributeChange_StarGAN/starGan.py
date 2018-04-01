@@ -22,7 +22,7 @@ class StarGan():
         self.b2 = 0.999
         self.batch = 16
         self.sample = 4
-        self.epochs = 1e8
+        self.epochs = 5e4
         self.imgSize = 128
         self.attSize = 12
         self.img_shape = (self.imgSize, self.imgSize, 3)
@@ -64,10 +64,10 @@ class StarGan():
         d_w_img = self.d_model([self.img_b, self.att_a])
         d_w_att = self.d_model([self.img_a, self.att_b])
         
-        d_loss_real = K.mean(K.binary_crossentropy(K.ones_like(d_a), K.sigmoid(d_a)))
-        d_loss_fake = K.mean(K.binary_crossentropy(K.zeros_like(d_a2b), K.sigmoid(d_a2b)))
-        d_loss_w_img = K.mean(K.binary_crossentropy(K.zeros_like(d_w_img), K.sigmoid(d_w_img)))
-        d_loss_w_att = K.mean(K.binary_crossentropy(K.zeros_like(d_w_att), K.sigmoid(d_w_att)))
+        d_loss_real = K.mean(K.binary_crossentropy(K.ones_like(d_a), K.sigmoid(d_a)), axis=-1)
+        d_loss_fake = K.mean(K.binary_crossentropy(K.zeros_like(d_a2b), K.sigmoid(d_a2b)), axis=-1)
+        d_loss_w_img = K.mean(K.binary_crossentropy(K.zeros_like(d_w_img), K.sigmoid(d_w_img)), axis=-1)
+        d_loss_w_att = K.mean(K.binary_crossentropy(K.zeros_like(d_w_att), K.sigmoid(d_w_att)), axis=-1)
         
 #         d_loss_real = K.mean(K.square(K.ones_like(d_img_a) - d_img_a), axis=-1)
 #         d_loss_fake = K.mean(K.square(K.zeros_like(d_img_a2b) - d_img_a2b), axis=-1) 
@@ -78,7 +78,7 @@ class StarGan():
 
         self.d_loss = d_loss_real + d_loss_fake + d_loss_w_img + d_loss_w_att
         
-        g_loss_fake = K.mean(K.binary_crossentropy(K.ones_like(d_a2b), K.sigmoid(d_a2b)))
+        g_loss_fake = K.mean(K.binary_crossentropy(K.ones_like(d_a2b), K.sigmoid(d_a2b)), axis=-1)
 #         g_loss_fake = K.mean(K.square(K.ones_like(d_img_a2b)- d_img_a2b), axis=-1)
         
 #         g_loss_cls = K.mean(K.square(self.att_b - K.softmax(d_att_a2b)))
@@ -89,10 +89,10 @@ class StarGan():
                           
     def get_optimizer(self):
         
-        self.g_training_updates = Adam(lr=self.lr, beta_1=self.b1, beta_2=self.b2).get_updates(self.g_model.trainable_weights,[], self.g_loss)
+        self.g_training_updates = Adam(lr=self.lr, decay=5e-9, beta_1=self.b1, beta_2=self.b2).get_updates(self.g_model.trainable_weights,[], self.g_loss)
         self.g_train = K.function([self.img_a, self.att_a, self.att_b], [self.g_loss], self.g_training_updates)
                           
-        self.d_training_updates = Adam(lr=self.lr, beta_1=self.b1, beta_2=self.b2).get_updates(self.d_model.trainable_weights,[], self.d_loss)
+        self.d_training_updates = Adam(lr=self.lr, decay=5e-9, beta_1=self.b1, beta_2=self.b2).get_updates(self.d_model.trainable_weights,[], self.d_loss)
         self.d_train = K.function([self.img_a, self.img_b, self.att_a, self.att_b], [self.d_loss], self.d_training_updates)
                           
     def train(self):
@@ -148,7 +148,7 @@ class StarGan():
 
             for i in range(1):
                 errD = self.d_train([img_as, img_bs, att_as, att_bs])
-            for i in range(2):
+            for i in range(1):
                 errG = self.g_train([img_as, att_as, att_bs])
             print(np.mean(errD), np.mean(errG))    
 
@@ -166,9 +166,9 @@ class StarGan():
                         image = (images[index]/2+0.5)*255
                         image = image.astype(np.uint8)
                         new_im.paste(Image.fromarray(image,"RGB"), (self.imgSize*ii,self.imgSize*jj))
-                filename = "fakeFace.png"
+                filename = "img/fakeFace%d.png"%(ite//100)
                 new_im.save(filename)
-                self.g_model.save("generator.h5")
+                self.g_model.save("model/generator%d.h5"%(ite//100))
             ite = ite + 1
     #             except KeyError:
     #                 print(indexs[0], img_fa, indexs[1], img_fb)

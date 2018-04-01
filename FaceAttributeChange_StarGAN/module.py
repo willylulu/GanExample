@@ -54,7 +54,7 @@ def generator(img, attr, size):
 
 def discriminator(img, attr, size, att_size):
     
-    def tileAttr(x):
+    def tileAttr2(x):
         x = tf.expand_dims(x, axis = 1)
         x = tf.expand_dims(x, axis = 2)
         return tf.tile(x, [1, size//64, size//64, 1])
@@ -77,11 +77,11 @@ def discriminator(img, attr, size, att_size):
     y = Conv2D(2048, 4, strides=2, padding='same', kernel_initializer='he_normal')(y)
     y = LeakyReLU(alpha=0.01)(y) # 2 2 2048
     
-    y = Concatenate()([y, Lambda(tileAttr)(attr)])
+    y = Concatenate()([y, Lambda(tileAttr2)(attr)])
     
     y = Conv2D(2048, 1, strides=1, kernel_initializer='he_normal')(y)
     y = LeakyReLU(alpha=0.01)(y) # 2 2 2048
     
-    y = Conv2D(1, 2, kernel_initializer='he_normal')(y)
+    y = Conv2D(1, 1, kernel_initializer='he_normal')(y)
     
     return y
