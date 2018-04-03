@@ -17,14 +17,14 @@ class StarGan():
     def __init__(self, path):
         
         self.path = path
-        self.lr = 1e-4
+        self.lr = 2e-4
         self.b1 = 0.5
         self.b2 = 0.999
-        self.batch = 16
+        self.batch = 8
         self.sample = 4
-        self.epochs = 5e4
-        self.imgSize = 128
-        self.attSize = 12
+        self.epochs = 4e4
+        self.imgSize = 256
+        self.attSize = 16
         self.img_shape = (self.imgSize, self.imgSize, 3)
         self.att_shape = (self.attSize,)
         K.set_learning_phase(True)
@@ -64,21 +64,20 @@ class StarGan():
         d_w_img = self.d_model([self.img_b, self.att_a])
         d_w_att = self.d_model([self.img_a, self.att_b])
         
-        d_loss_real = K.mean(K.binary_crossentropy(K.ones_like(d_a), K.sigmoid(d_a)), axis=-1)
-        d_loss_fake = K.mean(K.binary_crossentropy(K.zeros_like(d_a2b), K.sigmoid(d_a2b)), axis=-1)
-        d_loss_w_img = K.mean(K.binary_crossentropy(K.zeros_like(d_w_img), K.sigmoid(d_w_img)), axis=-1)
-        d_loss_w_att = K.mean(K.binary_crossentropy(K.zeros_like(d_w_att), K.sigmoid(d_w_att)), axis=-1)
+        d_loss_real = K.mean(K.square(K.ones_like(d_a) - d_a), axis=-1)
+        d_loss_fake = K.mean(K.square(K.zeros_like(d_a2b) - d_a2b), axis=-1)
+        d_loss_w_img = K.mean(K.square(K.zeros_like(d_w_img) - d_w_img), axis=-1)
+        d_loss_w_att = K.mean(K.square(K.zeros_like(d_w_att) - d_w_att), axis=-1)
         
 #         d_loss_real = K.mean(K.square(K.ones_like(d_img_a) - d_img_a), axis=-1)
 #         d_loss_fake = K.mean(K.square(K.zeros_like(d_img_a2b) - d_img_a2b), axis=-1) 
         
 #         d_loss_cls = K.mean(K.categorical_crossentropy(self.att_a, K.softmax(d_att_a)))
 #         d_loss_cls = K.mean(K.square(self.att_a - K.softmax(d_att_a)))
-        
-
+    
         self.d_loss = d_loss_real + d_loss_fake + d_loss_w_img + d_loss_w_att
         
-        g_loss_fake = K.mean(K.binary_crossentropy(K.ones_like(d_a2b), K.sigmoid(d_a2b)), axis=-1)
+        g_loss_fake = K.mean(K.square(K.ones_like(d_a2b) - d_a2b), axis=-1)
 #         g_loss_fake = K.mean(K.square(K.ones_like(d_img_a2b)- d_img_a2b), axis=-1)
         
 #         g_loss_cls = K.mean(K.square(self.att_b - K.softmax(d_att_a2b)))
