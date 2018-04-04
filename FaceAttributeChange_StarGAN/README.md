@@ -17,16 +17,16 @@ The images from left to right are ( original image, black hair, blond hair, male
 
 ##	Result
 ![imgb](https://github.com/willylulu/GanExample/blob/master/FaceAttributeChange_StarGAN/test1.png?raw=true)
-The images from left to right are ( original image, black hair, brown hair, male, male with mustache, without smiling, pale face )
+*	The images from left to right are ( original image, black hair, brown hair, male, male with mustache, without smiling, pale face )
 ---
 ![imgc](https://github.com/willylulu/GanExample/blob/master/FaceAttributeChange_StarGAN/test2.png?raw=true)
-The images from left to right are ( original image, black hair, blond hair, male, male with mustache, without smiling, pale face )
+*	The images from left to right are ( original image, black hair, blond hair, male, male with mustache, without smiling, pale face )
 ---
 ![imgd](https://github.com/willylulu/GanExample/blob/master/FaceAttributeChange_StarGAN/test3.png?raw=true)
-The images from left to right are ( original image, without mustache, blond hair, female, more mustache, smiling, pale face )
+*	The images from left to right are ( original image, without mustache, blond hair, female, more mustache, smiling, pale face )
 ---
 ![imge](https://github.com/willylulu/GanExample/blob/master/FaceAttributeChange_StarGAN/test4.png?raw=true)
-The images from left to right are ( original image, blond hair, brown hair, female, more mustache, without smiling, pale face )
+*	The images from left to right are ( original image, blond hair, brown hair, female, more mustache, without smiling, pale face )
 
 ##	Reference
 *	[yunjey/StarGAN](https://github.com/yunjey/StarGAN)
