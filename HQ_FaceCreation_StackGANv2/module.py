@@ -8,13 +8,13 @@ from ops import *
 
 d_dim = 64
 g_dim = 1024
-truncateNormal = keras.initializers.TruncatedNormal(mean=0.0, stddev=0.02, seed=None)
-
-
+# init_weight = keras.initializers.TruncatedNormal(mean=0.0, stddev=0.02, seed=None)
+init_weight = "he_normal"
+regular = regularizers.l2(1)
 def dnet_64(y):
     
     y = dnet_basic(y, d_dim) # 4 4 512
-    y = Conv2D(1, 4, strides=4, kernel_initializer=truncateNormal)(y)
+    y = Conv2D(1, 4, kernel_initializer=init_weight, kernel_regularizer=regular)(y)
 
 #     y = Flatten()(y)
 #     y = Dense(1)(y)
@@ -25,7 +25,7 @@ def dnet_128(y):
     y = dnet_basic(y, d_dim) # 8 8 512
     y = dnet_conv(y, d_dim, d_dim*16)
     y = dnet_block3x3(y, d_dim, d_dim*8)
-    y = Conv2D(1, 4, strides=4, kernel_initializer=truncateNormal)(y)
+    y = Conv2D(1, 4, kernel_initializer=init_weight, kernel_regularizer=regular)(y)
     
 #     y = Flatten()(y)
 #     y = Dense(1)(y)
@@ -38,7 +38,7 @@ def dnet_256(y):
     y = dnet_conv(y, d_dim, d_dim*32)
     y = dnet_block3x3(y, d_dim, d_dim*16)
     y = dnet_block3x3(y, d_dim, d_dim*8)
-    y = Conv2D(1, 4, strides=4, kernel_initializer=truncateNormal)(y)
+    y = Conv2D(1, 4, kernel_initializer=init_weight, kernel_regularizer=regular)(y)
     
 #     y = Flatten()(y)
 #     y = Dense(1)(y)
@@ -72,18 +72,18 @@ def gnet_256(y):
 
 def gnet_64_output(y):
     
-    y = Conv2D(3, 1, strides=1, kernel_initializer=truncateNormal, padding='same')(y)
+    y = Conv2D(3, 1, strides=1, kernel_initializer=init_weight, padding='same')(y)
     y = Activation('tanh')(y)
     return y
 
 def gnet_128_output(y):
     
-    y = Conv2D(3, 1, strides=1, kernel_initializer=truncateNormal, padding='same')(y)
+    y = Conv2D(3, 1, strides=1, kernel_initializer=init_weight, padding='same')(y)
     y = Activation('tanh')(y)
     return y
 
 def gnet_256_output(y):
     
-    y = Conv2D(3, 1, strides=1, kernel_initializer=truncateNormal, padding='same')(y)
+    y = Conv2D(3, 1, strides=1, kernel_initializer=init_weight, padding='same')(y)
     y = Activation('tanh')(y)
     return y

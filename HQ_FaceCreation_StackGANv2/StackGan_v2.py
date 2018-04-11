@@ -16,12 +16,16 @@ from keras.backend.tensorflow_backend import set_session
 class StackGan():
     
     def __init__(self, path, training=True):
-        self.batch = 24
+        
+        self.batch = 32
         self.imgNums = 30000
-        self.epochs = 30000
+        self.epochs = 20000
         self.noiseNum = 100
+        self.lr = 1e-4
+        self.decay = 0
+        self.d_loop = 1
+        self.g_loop = 2
         self.imageshape = [(64, 64, 3), (128, 128, 3), (256, 256, 3)]
-        self.lr = 0.0002
         
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
@@ -35,7 +39,7 @@ class StackGan():
             self.get_loss()
             self.get_optimizer()
         else:
-            K.set_learning_phase(False)
+            K.set_learning_phase(True)
             
             self.get_model()
             self.gnet_model.load_weights(path)
@@ -94,9 +98,14 @@ class StackGan():
         dnet_128_fake = self.dnet_128_model(fake_128)
         dnet_256_fake = self.dnet_256_model(fake_256)
         
-        g_loss_64 = K.mean(K.binary_crossentropy(K.ones_like(dnet_64_fake), K.sigmoid(dnet_64_fake)), axis=-1)
-        g_loss_128 = K.mean(K.binary_crossentropy(K.ones_like(dnet_128_fake), K.sigmoid(dnet_128_fake)), axis=-1)
-        g_loss_256 = K.mean(K.binary_crossentropy(K.ones_like(dnet_256_fake), K.sigmoid(dnet_256_fake)), axis=-1)
+        g_loss_64 = K.mean(K.binary_crossentropy(K.ones_like(dnet_64_fake) , K.sigmoid( dnet_64_fake)))
+        g_loss_128 = K.mean(K.binary_crossentropy(K.ones_like(dnet_128_fake) , K.sigmoid( dnet_128_fake)))
+        g_loss_256 = K.mean(K.binary_crossentropy(K.ones_like(dnet_256_fake) , K.sigmoid( dnet_256_fake)))
+        
+        
+#         g_loss_64 = K.mean(K.square(K.ones_like(dnet_64_fake) - dnet_64_fake), axis=-1)
+#         g_loss_128 = K.mean(K.square(K.ones_like(dnet_128_fake) - dnet_128_fake), axis=-1)
+#         g_loss_256 = K.mean(K.square(K.ones_like(dnet_256_fake) - dnet_256_fake), axis=-1)
         
         self.g_loss = g_loss_64 + g_loss_128 + g_loss_256 + 50*color_consistancy
         
@@ -109,30 +118,45 @@ class StackGan():
         dnet_256_real = self.dnet_256_model(self.real_256)
         
         
-        d_loss_64_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_64_real), K.sigmoid(dnet_64_real)), axis=-1)
-        d_loss_64_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_64_fake), K.sigmoid(dnet_64_fake)), axis=-1)
+        d_loss_64_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_64_real) , K.sigmoid( dnet_64_real)))
+        d_loss_64_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_64_fake) , K.sigmoid( dnet_64_fake)))
         
-        d_loss_128_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_128_real), K.sigmoid(dnet_128_real)), axis=-1)
-        d_loss_128_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_128_fake), K.sigmoid(dnet_128_fake)), axis=-1)
+        d_loss_128_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_128_real) , K.sigmoid( dnet_128_real)))
+        d_loss_128_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_128_fake) , K.sigmoid( dnet_128_fake)))
         
-        d_loss_256_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_256_real), K.sigmoid(dnet_256_real)), axis=-1)
-        d_loss_256_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_256_fake), K.sigmoid(dnet_256_fake)), axis=-1)
+        d_loss_256_real = K.mean(K.binary_crossentropy(K.ones_like(dnet_256_real) , K.sigmoid( dnet_256_real)))
+        d_loss_256_fake = K.mean(K.binary_crossentropy(K.zeros_like(dnet_256_fake) , K.sigmoid( dnet_256_fake)))
+        
+#         d_loss_64_real = K.mean(K.square(K.ones_like(dnet_64_real) - dnet_64_real), axis=-1)
+#         d_loss_64_fake = K.mean(K.square(K.zeros_like(dnet_64_fake) - dnet_64_fake), axis=-1)
+        
+#         d_loss_128_real = K.mean(K.square(K.ones_like(dnet_128_real) - dnet_128_real), axis=-1)
+#         d_loss_128_fake = K.mean(K.square(K.zeros_like(dnet_128_fake) - dnet_128_fake), axis=-1)
+        
+#         d_loss_256_real = K.mean(K.square(K.ones_like(dnet_256_real) - dnet_256_real), axis=-1)
+#         d_loss_256_fake = K.mean(K.square(K.zeros_like(dnet_256_fake) - dnet_256_fake), axis=-1)
         
         self.d_loss64 = d_loss_64_real + d_loss_64_fake
         self.d_loss128 = d_loss_128_real + d_loss_128_fake
         self.d_loss256 = d_loss_256_real + d_loss_256_fake 
+        
+        self.d_loss = self.d_loss64 + self.d_loss128 + self.d_loss256
     
     def get_optimizer(self):
         
-        self.g_training_updates = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.gnet_model.trainable_weights,[], self.g_loss)
+        self.g_training_updates = Adam(lr=self.lr, decay=self.decay/self.g_loop, beta_1=0.5, beta_2=0.999).get_updates(self.gnet_model.trainable_weights,[], self.g_loss)
         self.g_train = K.function([self.gnet_noise], [self.g_loss], self.g_training_updates)
         
-        self.d_training_updates64 = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_64_model.trainable_weights,[], self.d_loss64)
-        self.d_training_updates128 = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_128_model.trainable_weights,[], self.d_loss128)
-        self.d_training_updates256 = Adam(lr=self.lr, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_256_model.trainable_weights,[], self.d_loss256)
+        self.d_training_updates64 = Adam(lr=self.lr, decay=self.decay/self.d_loop, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_64_model.trainable_weights,[], self.d_loss64)
+        self.d_training_updates128 = Adam(lr=self.lr, decay=self.decay/self.d_loop, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_128_model.trainable_weights,[], self.d_loss128)
+        self.d_training_updates256 = Adam(lr=self.lr, decay=self.decay/self.d_loop, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_256_model.trainable_weights,[], self.d_loss256)
         self.d_train64 = K.function([self.gnet_noise, self.real_64], [self.d_loss64], self.d_training_updates64)
         self.d_train128 = K.function([self.gnet_noise, self.real_128], [self.d_loss128], self.d_training_updates128)
         self.d_train256 = K.function([self.gnet_noise, self.real_256], [self.d_loss256], self.d_training_updates256)
+        
+        self.d_training_updates = Adam(lr=self.lr, decay=self.decay, beta_1=0.5, beta_2=0.999).get_updates(self.dnet_256_model.trainable_weights + self.dnet_128_model.trainable_weights + self.dnet_64_model.trainable_weights,[], self.d_loss)
+        
+        self.d_train = K.function([self.gnet_noise, self.real_64, self.real_128, self.real_256], [self.d_loss], self.d_training_updates)
         
     def train(self):
         
@@ -148,29 +172,31 @@ class StackGan():
             self.dnet_256_model.load_weights('dnet_256_model.h5')
         
         for ep in range(self.epochs):
-            K.set_learning_phase(True)
             
             real_64, real_128, real_256 = self.dataset.getImages()
             noise = np.random.normal(0, 1.0, size=[self.batch, 100])
-            for i in range(1):
-                errD64 = self.d_train64([noise, real_64])
-                errD128 = self.d_train128([noise, real_128])
-                errD256 = self.d_train256([noise, real_256])
-                errD = np.mean(errD64) + np.mean(errD128) + np.mean(errD256)
-                
-            for i in range(1):
-                errG = self.g_train([noise])
-                errG = np.mean(errG)
+            for i in range(self.d_loop):
+                errD = self.d_train([noise, real_64, real_128, real_256])
+                errD = np.mean(errD)
+#                 errD64 = self.d_train64([noise, real_64])
+#                 errD128 = self.d_train128([noise, real_128])
+#                 errD256 = self.d_train256([noise, real_256])
+#                 errD = np.mean(errD64) + np.mean(errD128) + np.mean(errD256)
+            itee = 0
+            errG = 9999
+            while True:
+                temp = np.mean(self.g_train([noise]))
+                if abs(errG - temp) < 1:
+                    break
+                errG = temp
+                itee = itee + 1
             
-            print(errD, errG)
+            print(errD, errG, itee)
             
             if ep%10==0 and ep>0:
-                K.set_learning_phase(False)
                 
                 noise = np.random.normal(0, 1.0, size=[16, 100])
                 fake_64, fake_128, fake_256 = self.gnet_model.predict(noise)
-                saveImages('./fake64', fake_64, 64, ep/100)
-                saveImages('./fake128', fake_128, 128, ep/100)
                 saveImages('./fake256', fake_256, 256, ep/100)
                 print("save")
             if ep%100==0 and ep>0:
