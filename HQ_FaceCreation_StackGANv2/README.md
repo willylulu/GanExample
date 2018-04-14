@@ -1,12 +1,5 @@
 #	High quality face generator ( StackGAN++
-<figure class="half">
-  <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face1.png?raw=true" width="200" height="200">
-  <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face2.png?raw=true" width="200" height="200">
-</figure>
-<figure class="half">
-  <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face3.png?raw=true" width="200" height="200">
-  <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face4.png?raw=true" width="200" height="200">
-</figure>
+  <img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face1.png?raw=true" width="256" height="256">
 *	Generate 256x256 high quality face images
 *	Using StackGAN++ ( unconditional version
 *	Dataset use celeba-hq provided by [progressive GAN](https://github.com/tkarras/progressive_growing_of_gans/tree/original-theano-version)
