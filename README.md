@@ -7,8 +7,7 @@
 ---
 ##	HQ FaceCreation StackGANv2
 ###	High quality face generator
-![pic2](https://raw.githubusercontent.com/willylulu/GanExample/master/HQ_FaceCreation_StackGANv2/fakefaces/face1.png)
-![pic3](https://raw.githubusercontent.com/willylulu/GanExample/master/HQ_FaceCreation_StackGANv2/fakefaces/face2.png)
+![pic2](https://raw.githubusercontent.com/willylulu/GanExample/master/HQ_FaceCreation_StackGANv2/fakefaces/face5.png)
 
 ---
 ##	StyleTransfer CycleGAN
