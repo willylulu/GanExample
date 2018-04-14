@@ -19,9 +19,9 @@ class StackGan():
         
         self.batch = 32
         self.imgNums = 30000
-        self.epochs = 20000
+        self.epochs = int(1e6)
         self.noiseNum = 100
-        self.lr = 1e-4
+        self.lr = 2e-5
         self.decay = 0
         self.d_loop = 1
         self.g_loop = 2
@@ -34,7 +34,9 @@ class StackGan():
         if training:
             K.set_learning_phase(True)
             
-            self.dataset = celebHq(path, self.batch, 30000)
+            good_img_list = np.load('good_img.npy')
+            
+            self.dataset = celebHq(path, self.batch, len(good_img_list), good_img_list)
             self.get_model()
             self.get_loss()
             self.get_optimizer()
@@ -183,27 +185,31 @@ class StackGan():
 #                 errD256 = self.d_train256([noise, real_256])
 #                 errD = np.mean(errD64) + np.mean(errD128) + np.mean(errD256)
             itee = 0
-            errG = 9999
+            totoal_errG = 0
+            errG = float('inf')
             while True:
+                itee = itee + 1
                 temp = np.mean(self.g_train([noise]))
+                totoal_errG += temp
                 if abs(errG - temp) < 1:
                     break
                 errG = temp
-                itee = itee + 1
             
-            print(errD, errG, itee)
+            print("%.6f %.6f %.6f %3d"%(errD, errG, totoal_errG, itee))
             
             if ep%10==0 and ep>0:
                 
                 noise = np.random.normal(0, 1.0, size=[16, 100])
                 fake_64, fake_128, fake_256 = self.gnet_model.predict(noise)
+                saveImages('./fake64', fake_64, 64, ep/100)
+                saveImages('./fake128', fake_128, 128, ep/100)
                 saveImages('./fake256', fake_256, 256, ep/100)
                 print("save")
             if ep%100==0 and ep>0:
-                self.gnet_model.save_weights('gnet_model.h5')
-                self.dnet_64_model.save('dnet_64_model.h5')
-                self.dnet_128_model.save('dnet_128_model.h5')                
-                self.dnet_256_model.save('dnet_256_model.h5') 
+                self.gnet_model.save_weights('model/gnet_model%d.h5'%ep)
+                self.dnet_64_model.save('model/dnet_64_model.h5')
+                self.dnet_128_model.save('model/dnet_128_model.h5')                
+                self.dnet_256_model.save('model/dnet_256_model.h5') 
     def predict(self, noise):
         
         fake_64, fake_128, fake_256 = self.gnet_model.predict(noise)

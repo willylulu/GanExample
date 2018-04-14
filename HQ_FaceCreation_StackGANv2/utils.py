@@ -5,10 +5,12 @@ from PIL import Image
 
 class celebHq():
     
-    def __init__(self, path, batch, imgNums):
+    def __init__(self, path, batch, imgNums, fnList=[]):
         self.start = 0
         self.batch = batch
         self.imgNums = imgNums
+        if len(fnList) != 0:
+            self.fnList = fnList
         self.paths = [os.path.join(path, 'celeba-64'), os.path.join(path, 'celeba-128'), os.path.join(path, 'celeba-256')]
         
     def getImages(self):
@@ -21,9 +23,14 @@ class celebHq():
         celeba256 = [None]*self.batch
         j = 0
         for i in range(self.start, self.start + self.batch):
-            celeba64[j] = io.imread(os.path.join(self.paths[0], str(i)+'.jpg'))/127.5-1
-            celeba128[j] = io.imread(os.path.join(self.paths[1], str(i)+'.jpg'))/127.5-1
-            celeba256[j] = io.imread(os.path.join(self.paths[2], str(i)+'.jpg'))/127.5-1
+            if len(self.fnList) == 0:
+                celeba64[j] = io.imread(os.path.join(self.paths[0], str(i)+'.jpg'))/127.5-1
+                celeba128[j] = io.imread(os.path.join(self.paths[1], str(i)+'.jpg'))/127.5-1
+                celeba256[j] = io.imread(os.path.join(self.paths[2], str(i)+'.jpg'))/127.5-1
+            else:
+                celeba64[j] = io.imread(os.path.join(self.paths[0], str(self.fnList[i])+'.jpg'))/127.5-1
+                celeba128[j] = io.imread(os.path.join(self.paths[1], str(self.fnList[i])+'.jpg'))/127.5-1
+                celeba256[j] = io.imread(os.path.join(self.paths[2], str(self.fnList[i])+'.jpg'))/127.5-1
             j += 1
         
         celeba64 = np.array(celeba64)
