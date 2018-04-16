@@ -14,8 +14,19 @@
 `python3 predict.py <path to gnet model weights>`
 
 ##	Result
-<img src="https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face5.png?raw=true">
+Random pick 32 images as input and train the model 1144200 times
+![imga](https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face5.png?raw=true)
+
+##  Improve training
+To make more stable training and better quality, tune and modify code instead of original paper
+*	Combine the 3 stage discriminator losses
+*	Use he normal as initial weights
+*	Use regulation and dropout
+*	Decrease learning rate
+*	Training discriminator one time and training generator many times until it converge in each loop
 
 ##	Reference
 *	[hanzhanggit/StackGAN-v2](https://github.com/hanzhanggit/StackGAN-v2)
 *	[StackGAN++: Realistic Image Synthesis with Stacked Generative Adversarial Networks](https://arxiv.org/abs/1710.10916)
+*	[tensorflow/magenta/reviews](https://github.com/tensorflow/magenta/blob/master/magenta/reviews/GAN.md)
+*	[tkarras/progressive_growing_of_gans](https://github.com/tkarras/progressive_growing_of_gans)
