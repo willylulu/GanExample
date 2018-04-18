@@ -24,6 +24,7 @@ To make more stable training and better quality, tune and modify code instead of
 *	Use regulation and dropout
 *	Decrease learning rate
 *	Training discriminator one time and training generator many times until it converge in each loop
+* Remove all images having bald or wearing hat or glasses attributes
 
 ##	Reference
 *	[hanzhanggit/StackGAN-v2](https://github.com/hanzhanggit/StackGAN-v2)
