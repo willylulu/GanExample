@@ -27,6 +27,7 @@ The images from left to right are ( original image, black hair, brown hair, male
 ---
 ##	GAN Loss Library
 ###	Classic GAN Losses implemented by Keras
+* DCGAN
 *	LSGAN
 *	WGAN
 *	WGAN-GP
