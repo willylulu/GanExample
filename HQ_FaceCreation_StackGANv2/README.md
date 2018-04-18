@@ -14,7 +14,7 @@
 `python3 predict.py <path to gnet model weights>`
 
 ##	Result
-Random pick 32 images as input and train the model 1144200 times
+Random pick 32 images as input and train the model 200000 times
 ![imga](https://github.com/willylulu/GanExample/blob/master/HQ_FaceCreation_StackGANv2/fakefaces/face5.png?raw=true)
 
 ##  Improve training
